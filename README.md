@@ -1,80 +1,147 @@
-# Wobb Frontend Assignment
+# InfluencerSearch
 
-A starter influencer search application built with **React**, **TypeScript**, **Vite**, and **Tailwind CSS**. This project is intentionally left in a rough-but-working state for candidates to improve.
+A modern influencer discovery platform built with **React 19**, **TypeScript**, **Vite**, **Tailwind CSS v4**, and **Zustand**.
 
-## Getting Started
+Find and shortlist top creators across Instagram, YouTube, and TikTok.
+
+## Quick Start
 
 ```bash
 npm install
-npm run dev
+npm run dev      # Start dev server at http://localhost:5173
+npm run build    # Production build
+npm run test     # Run tests
+npm run lint     # Run ESLint
 ```
 
-Open [http://localhost:5173](http://localhost:5173) to view the app.
+## What Changed
 
-## What's Included
+### 1. Bug Fixes
 
-- **Search / Dashboard** — filter influencers by platform (Instagram, YouTube, TikTok) and search by username or full name
-- **Profile Details** — click a profile to view extended data loaded from individual JSON files
-- **Routing** — `react-router-dom` with `/` (search) and `/profile/:username` (details)
+| Bug | Location | Fix |
+|-----|----------|-----|
+| Case-sensitive username search | `dataHelpers.ts` | Added `.toLowerCase()` to username matching |
+| Wrong engagement rate multiplier (×10000) | `ProfileDetailPage` | Changed to ×100 (correct percentage) |
+| Dead `clickCount` state/logging | `SearchPage` | Removed unused state and handler |
+| Duplicate follower formatter | `ProfileCard` & `formatters.ts` | Removed local function, shared utility instead |
+| Useless `data-search` attribute | `ProfileCard` | Removed debug attribute |
+| `loaded: true` even on error | `ProfileDetailPage` | Proper error/loading state separation |
+| Unused but imported `SearchBar` component | `PlatformFilter` | Consolidated search into feature components |
+| Incompatible `react-beautiful-dnd` | `package.json` | Removed (incompatible with React 19) |
+| `ignoreDeprecations` in tsconfig | `tsconfig.app.json` | Removed invalid option |
+| Vague `<title>` | `index.html` | Changed to "InfluencerSearch — Find Top Creators" |
 
-Sample data lives in:
+### 2. UI/UX Redesign
 
-- `src/assets/data/search/` — platform search results (10 profiles each)
-- `src/assets/data/profiles/` — detailed profile JSON per username
+- **Modern card-based layout** with hover effects, shadows, and subtle animations
+- **Platform filter buttons** with distinct color theming (Pink/Red/Dark)
+- **Search bar** with search icon, proper responsive layout
+- **Search result highlighting** — matched text is highlighted with a subtle indigo background
+- **Profile detail page** with animated entry, stats grid, and clear information hierarchy
+- **Sticky header** with backdrop blur
+- **Dark mode support** via Tailwind CSS `dark:` variants
+- **Responsive design** — works on mobile through desktop
+- **Accessibility improvements** — `aria-label`, `aria-pressed`, `role` attributes, semantic HTML
+- **Loading states** with spinner animation
+- **Error states** for invalid profiles
 
-## How to Submit
+### 3. State Management (Zustand)
 
-1. **Download or clone** this starter project to your machine.
-2. **Create a new repository** on your own GitHub account. Do not fork the original assignment repo — push your work to a repo you own.
-3. Complete the tasks below and push your changes to that repository.
-4. **Share the public GitHub repository URL** with us as your submission.
+Replaced the implicit React Context pattern with a dedicated **Zustand store** with `persist` middleware:
 
-### Deadline (strict)
+```ts
+// src/features/list/store.ts
+export const useListStore = create<ListState>()(
+  persist(
+    (set, get) => ({
+      profiles: [],
+      addProfile,   // Add with duplicate prevention
+      removeProfile, // Remove by user_id
+      clearList,     // Clear all
+      isInList,      // Check existence
+    }),
+    { name: "influencer-search-selected-list" }
+  ),
+);
+```
 
-- **Due:** **2 July 2026, 2:00 PM IST** (Indian Standard Time, UTC+5:30)
-- **Any git commits made after this deadline will disqualify your submission.** We will only consider the repository state as of the deadline; late commits will not be reviewed.
-- Make sure your final work is pushed **before** the cutoff.
+- **Persistent** — list survives page refresh via `localStorage`
+- **Duplicate prevention** — returns `{ success: false, reason: "already_in_list" }`
+- **SSR-safe** — falls back to in-memory storage in non-browser environments
+- **No React Context boilerplate** — no providers, no wrapping components
 
-## AI Usage
+### 4. "Add to List" Feature
 
-You may use any AI tools (Cursor, ChatGPT, Claude, GitHub Copilot, etc.). We are evaluating your final solution and engineering decisions.
+- **Add** profiles from search results or profile detail page
+- **Remove** profiles with a single click
+- **Duplicate prevention** — already-added profiles show "Added" state
+- **Persistent** — list data survives page refresh
+- **Slide-in drawer** from the right to view and manage the list
+- **Time-ago indicators** showing when each profile was added
+- **Quick navigation** from list items to profile detail pages
 
-## Your Tasks
+### 5. Code Quality & Structure
 
-Complete the following as part of your submission:
+- **Feature-based folder structure** (`features/search/`, `features/profile/`, `features/list/`)
+- **Shared UI primitives** in `components/ui/` (Button, Card, Input, Badge, etc.)
+- **Custom hooks** for data loading
+- **Proper TypeScript types** with interfaces for all data shapes
+- **ESLint** with recommended + React hooks + React Refresh configs
+- **Clean component separation** — each component has a single responsibility
 
-1. **Find and fix all bugs and quality issues** — the codebase contains intentional bugs and quality issues. Identify and resolve them.
+### 6. Performance Optimizations
 
-2. **Completely redesign the UI/UX** — replace the basic layout with a polished, modern interface. Focus on usability, visual hierarchy, and delight.
+- **`React.memo`** on `ProfileCard` to prevent re-renders of unchanged cards
+- **`useMemo`** for filtered profile list and platform data extraction
+- **`useCallback`** for event handlers passed to child components
+- **Lazy loading** of the list panel via `React.lazy()` + `Suspense`
+- **`loading="lazy"`** on all profile images
+- **Tree-shakeable** icon imports
 
-3. **Replace React Context with Zustand** — when you implement state management for the selected list, use [Zustand](https://github.com/pmndrs/zustand) instead of React Context.
+### 7. Tests
 
-4. **Implement "Select profile & Add to List"** — the disabled "Add to List" button is a stub. Build the full feature:
-   - Select / add profiles to a persistent list
-   - View and manage the selected list
-   - Handle duplicates appropriately
+23 passing tests across 3 test suites:
 
-5. **Improve code quality and project structure** — refactor as needed, add proper types, and follow React best practices.
+- **`formatters.test.ts`** — `formatFollowers`, `formatEngagementRate`, `formatNumber`, `timeAgo`
+- **`data-helpers.test.ts`** — `filterProfiles` (case-insensitivity, trimming, edge cases), `getPlatformLabel`, `PLATFORMS`
+- **`store.test.ts`** — add, duplicate prevention, remove, clear, `isInList`
 
-6. **Optimize performance** — apply sensible optimizations where appropriate.
+Run with: `npm run test`
 
-7. **Use any libraries you need** — you are not limited to the current stack. Choose tools that help you deliver a great result (UI kits, state managers, testing libraries, etc.).
+## Libraries Added
 
-## Scripts
+| Library | Version | Purpose |
+|---------|---------|---------|
+| `zustand` | ^5.0 | State management with persist middleware |
+| `framer-motion` | ^12 | Slide-in drawer animation, page transitions |
+| `lucide-react` | ^1.22 | Consistent icon set |
+| `class-variance-authority` | ^0.7 | UI component variant props |
+| `clsx` | ^2.1 | Conditional class merging |
+| `tailwind-merge` | ^3.6 | Smart Tailwind class merging |
+| `vitest` | ^4.1 (dev) | Test runner |
+| `@testing-library/jest-dom` | ^6.9 (dev) | DOM assertion matchers |
 
-| Command        | Description              |
-| -------------- | ------------------------ |
-| `npm run dev`  | Start development server |
-| `npm run build`| Production build         |
-| `npm run lint` | Run ESLint               |
+## Assumptions & Trade-offs
 
-## Submission Notes
+- **Data is static JSON** — The app reads from pre-bundled JSON files. In production this would be an API.
+- **Profile loading uses Vite's `import.meta.glob`** — This is efficient for static data but wouldn't work for dynamic API calls.
+- **No authentication** — The app is single-user; multi-user support would require a backend.
+- **Brand icons are inline SVGs** — Lucide React v1 doesn't include brand icons (Instagram, YouTube, TikTok) for licensing reasons, so I created clean SVG approximations.
+- **One list per device** — localStorage persistence means the list is local; cross-device sync would need a backend.
+- **No routing state** — Search query and platform filter reset on navigation. `useSearchParams` could be used for shareable URLs.
+- **No analytics** — The dead `clickCount` was removed rather than connected to an analytics SDK.
 
-- Document any assumptions or trade-offs in your README
-- Ensure `npm run build` passes before submitting
-- Focus on demonstrating your judgment — not every possible feature needs to be built, but the core assignment items should be addressed thoughtfully
-- Double-check that your repo is public (or that we have access) and that the link is included in your submission
-- Please make meaningful commits throughout your work. We may review your commit history.
-- **Bonus:** Deploying the app (e.g. Vercel, Netlify, GitHub Pages) is optional but will be considered a plus — include the live URL in your submission if you do
+## Remaining Improvements
 
-Good luck!
+Given more time, I would add:
+
+- [ ] **React Router `useSearchParams`** for the search page so filters survive navigation
+- [ ] **Integration tests** for the search page and profile page with MSW
+- [ ] **Drag-and-drop** list reordering (using `@dnd-kit` instead of deprecated `react-beautiful-dnd`)
+- [ ] **Virtual scrolling** for large profile lists (e.g., `@tanstack/react-virtual`)
+- [ ] **E2E tests** with Playwright
+- [ ] **Error boundary** component for React error recovery
+- [ ] **Keyboard navigation** improvements (e.g., arrow keys in search results)
+- [ ] **Skeleton loading states** instead of the spinner
+- [ ] **CI/CD pipeline** (GitHub Actions for lint → test → build)
+- [ ] **Deployment** to Vercel or Netlify
