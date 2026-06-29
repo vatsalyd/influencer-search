@@ -7,9 +7,11 @@ interface VerifiedBadgeProps {
 export function VerifiedBadge({ verified }: VerifiedBadgeProps) {
   if (!verified) return null;
   return (
-    <BadgeCheck
-      className="inline-block h-4 w-4 text-blue-500 -mt-0.5"
-      aria-label="Verified"
-    />
+    <span className="inline-flex animate-[pulse-glow_2s_ease-in-out_infinite] rounded-full">
+      <BadgeCheck
+        className="inline-block h-4 w-4 text-blue-500 -mt-0.5"
+        aria-label="Verified"
+      />
+    </span>
   );
 }

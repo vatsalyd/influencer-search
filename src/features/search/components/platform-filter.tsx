@@ -59,16 +59,20 @@ export function PlatformFilter({ selected, onChange }: PlatformFilterProps) {
             onClick={() => onChange(p)}
             data-active={isActive}
             className={cn(
-              "flex items-center gap-2 px-4 py-2.5 rounded-lg border text-sm font-medium transition-all duration-200",
+              "relative flex items-center gap-2 px-4 py-2.5 rounded-lg border text-sm font-medium transition-all duration-200",
               "hover:bg-gray-50 dark:hover:bg-gray-800 text-gray-600 dark:text-gray-400 border-gray-200 dark:border-gray-700",
               "data-[active=true]:shadow-sm",
               platformColors[p],
               !isActive && "bg-white dark:bg-gray-900",
+              "active:scale-95",
             )}
             aria-pressed={isActive}
           >
             <PlatformIcon platform={p} className="h-4 w-4" />
             {getPlatformLabel(p)}
+            {isActive && (
+              <span className="absolute inset-0 rounded-lg ring-2 ring-offset-2 ring-offset-white dark:ring-offset-gray-950 ring-current opacity-60 animate-[fade-in-up_0.2s_ease-out]" />
+            )}
           </button>
         );
       })}

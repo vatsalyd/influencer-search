@@ -210,6 +210,7 @@ export function ProfileDetailPage() {
             <ProfileStat
               label="Followers"
               value={formatNumber(user.followers)}
+              numericValue={user.followers}
             />
             <ProfileStat
               label="Engagement Rate"
@@ -219,36 +220,42 @@ export function ProfileDetailPage() {
               <ProfileStat
                 label="Posts"
                 value={formatNumber(user.posts_count)}
+                numericValue={user.posts_count}
               />
             )}
             {user.avg_likes !== undefined && (
               <ProfileStat
                 label="Avg Likes"
                 value={formatNumber(user.avg_likes)}
+                numericValue={user.avg_likes}
               />
             )}
             {user.avg_comments !== undefined && (
               <ProfileStat
                 label="Avg Comments"
                 value={formatNumber(user.avg_comments)}
+                numericValue={user.avg_comments}
               />
             )}
             {user.avg_views !== undefined && user.avg_views > 0 && (
               <ProfileStat
                 label="Avg Views"
                 value={formatNumber(user.avg_views)}
+                numericValue={user.avg_views}
               />
             )}
             {user.engagements !== undefined && (
               <ProfileStat
                 label="Engagements"
                 value={formatNumber(user.engagements)}
+                numericValue={user.engagements}
               />
             )}
             {user.total_likes !== undefined && (
               <ProfileStat
                 label="Total Likes"
                 value={formatNumber(user.total_likes)}
+                numericValue={user.total_likes}
               />
             )}
             {user.gender && (

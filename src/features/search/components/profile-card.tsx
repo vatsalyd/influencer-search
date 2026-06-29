@@ -69,7 +69,7 @@ export const ProfileCard = memo(function ProfileCard({
   return (
     <div
       onClick={handleClick}
-      className="group flex items-center gap-4 p-4 rounded-xl border border-gray-100 dark:border-gray-700/50 bg-white dark:bg-gray-900/50 cursor-pointer transition-all duration-200 hover:shadow-md hover:border-gray-200 dark:hover:border-gray-600 hover:-translate-y-0.5"
+      className="group flex items-center gap-4 p-4 rounded-xl border border-gray-100 dark:border-gray-700/50 bg-white dark:bg-gray-900/50 cursor-pointer transition-all duration-300 hover:shadow-lg hover:border-indigo-200 dark:hover:border-indigo-800 hover:-translate-y-1 hover:scale-[1.01] active:scale-[0.99]"
     >
       <img
         src={profile.picture}
