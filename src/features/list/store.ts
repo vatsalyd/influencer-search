@@ -1,8 +1,17 @@
 import { create } from "zustand";
-import { persist } from "zustand/middleware";
+import { persist, createJSONStorage } from "zustand/middleware";
 import type { Platform, SelectedProfile } from "@/types";
 
 const LIST_STORAGE_KEY = "influencer-search-selected-list";
+
+const storageFallback = {
+  getItem: () => null,
+  setItem: () => {},
+  removeItem: () => {},
+};
+
+const getStorage = () =>
+  typeof window !== "undefined" ? localStorage : storageFallback;
 
 interface ListState {
   profiles: SelectedProfile[];
@@ -57,6 +66,7 @@ export const useListStore = create<ListState>()(
     }),
     {
       name: LIST_STORAGE_KEY,
+      storage: createJSONStorage(getStorage),
     },
   ),
 );
