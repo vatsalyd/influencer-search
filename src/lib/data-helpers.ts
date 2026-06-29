@@ -20,12 +20,13 @@ export function extractProfiles(platform: Platform): UserProfileSummary[] {
 
 export function filterProfiles(
   profiles: UserProfileSummary[],
-  query: string
+  query: string,
 ): UserProfileSummary[] {
-  if (!query) return profiles;
+  if (!query.trim()) return profiles;
+  const normalizedQuery = query.toLowerCase().trim();
   return profiles.filter((p) => {
-    const matchUsername = p.username.includes(query);
-    const matchFullname = p.fullname.toLowerCase().includes(query.toLowerCase());
+    const matchUsername = p.username.toLowerCase().includes(normalizedQuery);
+    const matchFullname = p.fullname.toLowerCase().includes(normalizedQuery);
     return matchUsername || matchFullname;
   });
 }
@@ -33,7 +34,10 @@ export function filterProfiles(
 export const PLATFORMS: Platform[] = ["instagram", "youtube", "tiktok"];
 
 export function getPlatformLabel(platform: Platform): string {
-  if (platform === "instagram") return "Instagram";
-  if (platform === "youtube") return "YouTube";
-  return "TikTok";
+  const labels: Record<Platform, string> = {
+    instagram: "Instagram",
+    youtube: "YouTube",
+    tiktok: "TikTok",
+  };
+  return labels[platform];
 }

@@ -1,8 +1,8 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-import { SearchPage } from "@/pages/SearchPage";
-import { ProfileDetailPage } from "@/pages/ProfileDetailPage";
+import { SearchPage } from "@/features/search/page";
+import { ProfileDetailPage } from "@/features/profile/page";
 
-function App() {
+export default function App() {
   return (
     <BrowserRouter>
       <Routes>
@@ -12,5 +12,3 @@ function App() {
     </BrowserRouter>
   );
 }
-
-export default App;
