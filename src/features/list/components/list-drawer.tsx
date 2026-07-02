@@ -34,7 +34,7 @@ export function ListDrawer({ children, onClose }: ListDrawerProps) {
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
         transition={{ duration: 0.2 }}
-        className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm"
+        className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm"
         onClick={handleOverlayClick}
       >
         <motion.div
@@ -42,22 +42,27 @@ export function ListDrawer({ children, onClose }: ListDrawerProps) {
           animate={{ x: 0 }}
           exit={{ x: "100%" }}
           transition={{ type: "spring", damping: 25, stiffness: 300 }}
-          className="fixed right-0 top-0 bottom-0 w-full max-w-md bg-white dark:bg-gray-900 shadow-2xl border-l border-gray-200 dark:border-gray-700"
+          className="fixed right-0 top-0 bottom-0 w-full max-w-md glass border-l border-[var(--border-subtle)] shadow-2xl"
+          style={{ background: "var(--bg-secondary)" }}
           role="dialog"
           aria-modal="true"
           aria-label="Selected profiles list"
         >
-          <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700">
-            <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
-              My List
-            </h2>
-            <button
-              onClick={onClose}
-              className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors text-gray-500"
-              aria-label="Close list"
-            >
-              <X className="h-5 w-5" />
-            </button>
+          {/* Header with gradient accent */}
+          <div className="relative">
+            <div className="absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r from-indigo-500 via-violet-500 to-purple-500" />
+            <div className="flex items-center justify-between p-4 border-b border-[var(--border-subtle)]">
+              <h2 className="text-lg font-semibold text-[var(--text-primary)] font-[var(--font-display)]">
+                My List
+              </h2>
+              <button
+                onClick={onClose}
+                className="p-2 rounded-xl hover:bg-white/5 transition-colors text-[var(--text-muted)] hover:text-[var(--text-primary)]"
+                aria-label="Close list"
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </div>
           </div>
           <div className="h-[calc(100vh-65px)] overflow-y-auto">
             {children}
