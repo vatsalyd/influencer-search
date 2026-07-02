@@ -6,7 +6,6 @@ import { VerifiedBadge } from "./verified-badge";
 import { formatFollowers } from "@/lib/formatters";
 import { cn } from "@/lib/utils";
 import { useListStore } from "@/features/list/store";
-import { Button } from "@/components/ui/button";
 
 interface ProfileCardProps {
   profile: UserProfileSummary;
@@ -21,7 +20,7 @@ function highlightMatch(text: string, query: string) {
   const parts = text.split(regex);
   return parts.map((part, i) =>
     regex.test(part) ? (
-      <mark key={i} className="bg-indigo-100 dark:bg-indigo-900/40 text-inherit rounded-sm px-0.5">
+      <mark key={i} className="bg-indigo-500/20 text-inherit rounded-sm px-0.5">
         {part}
       </mark>
     ) : (
@@ -29,6 +28,12 @@ function highlightMatch(text: string, query: string) {
     ),
   );
 }
+
+const platformColors: Record<Platform, string> = {
+  instagram: "from-pink-500 to-purple-500",
+  youtube: "from-red-500 to-red-600",
+  tiktok: "from-cyan-400 to-pink-500",
+};
 
 export const ProfileCard = memo(function ProfileCard({
   profile,
@@ -69,61 +74,102 @@ export const ProfileCard = memo(function ProfileCard({
   return (
     <div
       onClick={handleClick}
-      className="group flex items-center gap-4 p-4 rounded-xl border border-gray-100 dark:border-gray-700/50 bg-white dark:bg-gray-900/50 cursor-pointer transition-all duration-300 hover:shadow-lg hover:border-indigo-200 dark:hover:border-indigo-800 hover:-translate-y-1 hover:scale-[1.01] active:scale-[0.99]"
+      className="group relative flex flex-col rounded-2xl glass cursor-pointer transition-all duration-300 hover:shadow-[var(--shadow-card-hover)] hover:border-[var(--border-medium)] hover:-translate-y-1 hover:scale-[1.02] active:scale-[0.98] overflow-hidden"
     >
-      <img
-        src={profile.picture}
-        alt={`${profile.fullname}'s avatar`}
-        className="h-12 w-12 rounded-full object-cover ring-2 ring-gray-100 dark:ring-gray-700 shrink-0"
-        loading="lazy"
+      {/* Gradient top accent bar */}
+      <div
+        className={cn(
+          "h-1 w-full bg-gradient-to-r opacity-60 group-hover:opacity-100 transition-opacity duration-300",
+          platformColors[platform],
+        )}
       />
 
-      <div className="flex-1 min-w-0">
-        <div className="flex items-center gap-1.5">
-          <span className="font-semibold text-gray-900 dark:text-gray-100 truncate">
-            {highlightUsername}
-          </span>
-          <VerifiedBadge verified={profile.is_verified} />
+      <div className="p-5">
+        {/* Header: Avatar + Info */}
+        <div className="flex items-start gap-4 mb-4">
+          <div className="relative shrink-0">
+            <img
+              src={profile.picture}
+              alt={`${profile.fullname}'s avatar`}
+              className="h-14 w-14 rounded-xl object-cover ring-2 ring-[var(--border-subtle)] group-hover:ring-[var(--accent-indigo)]/40 transition-all duration-300"
+              loading="lazy"
+            />
+            {profile.is_verified && (
+              <div className="absolute -bottom-1 -right-1 bg-[var(--bg-primary)] rounded-full p-0.5">
+                <VerifiedBadge verified={true} />
+              </div>
+            )}
+          </div>
+
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center gap-1.5">
+              <span className="font-semibold text-[var(--text-primary)] truncate text-sm">
+                {highlightUsername}
+              </span>
+            </div>
+            <div className="text-xs text-[var(--text-secondary)] truncate mt-0.5">
+              {highlightName}
+            </div>
+          </div>
         </div>
-        <div className="text-sm text-gray-500 dark:text-gray-400 truncate">
-          {highlightName}
-        </div>
-        <div className="flex items-center gap-3 mt-1.5">
-          <div className="flex items-center gap-1 text-xs text-gray-400">
-            <Users className="h-3 w-3" />
-            <span>{formatFollowers(profile.followers)}</span>
+
+        {/* Stats Row */}
+        <div className="flex items-center gap-4 mb-4">
+          <div className="flex items-center gap-1.5 text-xs text-[var(--text-secondary)]">
+            <Users className="h-3.5 w-3.5 text-[var(--accent-indigo)]" />
+            <span className="font-medium text-[var(--text-primary)]">
+              {formatFollowers(profile.followers)}
+            </span>
+            <span>followers</span>
           </div>
           {profile.engagement_rate !== undefined && (
-            <div className="flex items-center gap-1 text-xs text-gray-400">
-              <Heart className="h-3 w-3" />
-              <span>{(profile.engagement_rate * 100).toFixed(1)}%</span>
+            <div className="flex items-center gap-1.5 text-xs text-[var(--text-secondary)]">
+              <Heart className="h-3.5 w-3.5 text-pink-400" />
+              <span
+                className={cn(
+                  "font-medium",
+                  profile.engagement_rate * 100 > 3
+                    ? "text-emerald-400"
+                    : profile.engagement_rate * 100 > 1
+                      ? "text-amber-400"
+                      : "text-[var(--text-primary)]",
+                )}
+              >
+                {(profile.engagement_rate * 100).toFixed(1)}%
+              </span>
+              <span>engagement</span>
             </div>
           )}
         </div>
-      </div>
 
-      <Button
-        variant={inList ? "secondary" : "outline"}
-        size="sm"
-        onClick={handleAddToList}
-        className={cn(
-          "shrink-0 transition-all duration-200",
-          inList && "text-emerald-600 dark:text-emerald-400 border-emerald-200 dark:border-emerald-800",
-        )}
-        aria-label={inList ? `Remove ${profile.fullname} from list` : `Add ${profile.fullname} to list`}
-      >
-        {inList ? (
-          <>
-            <Check className="h-3.5 w-3.5" />
-            Added
-          </>
-        ) : (
-          <>
-            <Plus className="h-3.5 w-3.5" />
-            Add
-          </>
-        )}
-      </Button>
+        {/* Add to List Button */}
+        <button
+          onClick={handleAddToList}
+          className={cn(
+            "w-full flex items-center justify-center gap-2 py-2.5 rounded-xl text-xs font-semibold transition-all duration-200",
+            inList
+              ? "bg-emerald-500/15 text-emerald-400 border border-emerald-500/20 hover:bg-emerald-500/25"
+              : "bg-[var(--accent-indigo)]/10 text-[var(--accent-indigo)] border border-[var(--accent-indigo)]/20 hover:bg-[var(--accent-indigo)]/20",
+          )}
+          aria-label={
+            inList
+              ? `Remove ${profile.fullname} from list`
+              : `Add ${profile.fullname} to list`
+          }
+        >
+          {inList ? (
+            <>
+              <Check className="h-3.5 w-3.5" />
+              Added to List
+            </>
+          ) : (
+            <>
+              <Plus className="h-3.5 w-3.5" />
+              Add to List
+            </>
+          )}
+        </button>
+      </div>
     </div>
   );
 });

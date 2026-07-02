@@ -1,3 +1,4 @@
+import { motion } from "framer-motion";
 import type { Platform } from "@/types";
 import { PLATFORMS, getPlatformLabel } from "@/lib/data-helpers";
 import { cn } from "@/lib/utils";
@@ -38,13 +39,10 @@ function PlatformIcon({ platform, className }: PlatformIconProps) {
   }
 }
 
-const platformColors: Record<Platform, string> = {
-  instagram:
-    "data-[active=true]:bg-gradient-to-r data-[active=true]:from-pink-500 data-[active=true]:via-purple-500 data-[active=true]:to-orange-400 data-[active=true]:text-white data-[active=true]:border-transparent",
-  youtube:
-    "data-[active=true]:bg-red-600 data-[active=true]:text-white data-[active=true]:border-transparent",
-  tiktok:
-    "data-[active=true]:bg-gray-900 dark:data-[active=true]:bg-white data-[active=true]:text-white dark:data-[active=true]:text-gray-900 data-[active=true]:border-transparent",
+const platformAccents: Record<Platform, string> = {
+  instagram: "from-pink-500 via-purple-500 to-orange-400",
+  youtube: "from-red-500 to-red-600",
+  tiktok: "from-cyan-400 to-pink-500",
 };
 
 export function PlatformFilter({ selected, onChange }: PlatformFilterProps) {
@@ -57,22 +55,30 @@ export function PlatformFilter({ selected, onChange }: PlatformFilterProps) {
             key={p}
             type="button"
             onClick={() => onChange(p)}
-            data-active={isActive}
             className={cn(
-              "relative flex items-center gap-2 px-4 py-2.5 rounded-lg border text-sm font-medium transition-all duration-200",
-              "hover:bg-gray-50 dark:hover:bg-gray-800 text-gray-600 dark:text-gray-400 border-gray-200 dark:border-gray-700",
-              "data-[active=true]:shadow-sm",
-              platformColors[p],
-              !isActive && "bg-white dark:bg-gray-900",
+              "relative flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium transition-all duration-300",
               "active:scale-95",
+              isActive
+                ? "text-white shadow-lg"
+                : "glass text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:border-[var(--border-medium)]",
             )}
             aria-pressed={isActive}
           >
-            <PlatformIcon platform={p} className="h-4 w-4" />
-            {getPlatformLabel(p)}
+            {/* Active gradient background */}
             {isActive && (
-              <span className="absolute inset-0 rounded-lg ring-2 ring-offset-2 ring-offset-white dark:ring-offset-gray-950 ring-current opacity-60 animate-[fade-in-up_0.2s_ease-out]" />
+              <motion.div
+                layoutId="platform-tab"
+                className={cn(
+                  "absolute inset-0 rounded-xl bg-gradient-to-r",
+                  platformAccents[p],
+                )}
+                transition={{ type: "spring", stiffness: 400, damping: 30 }}
+              />
             )}
+            <span className="relative z-10 flex items-center gap-2">
+              <PlatformIcon platform={p} className="h-4 w-4" />
+              {getPlatformLabel(p)}
+            </span>
           </button>
         );
       })}

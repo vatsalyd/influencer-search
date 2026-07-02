@@ -18,13 +18,15 @@ export function ProfileList({
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="flex flex-col items-center justify-center py-16 text-center"
+        className="flex flex-col items-center justify-center py-20 text-center"
       >
-        <div className="text-6xl mb-4 opacity-30">🔍</div>
-        <p className="text-gray-500 dark:text-gray-400 text-lg font-medium">
+        <div className="w-20 h-20 rounded-2xl glass flex items-center justify-center mb-5">
+          <span className="text-4xl opacity-50">🔍</span>
+        </div>
+        <p className="text-[var(--text-primary)] text-lg font-semibold font-[var(--font-display)] mb-1">
           No profiles found
         </p>
-        <p className="text-gray-400 dark:text-gray-500 text-sm mt-1">
+        <p className="text-[var(--text-muted)] text-sm">
           Try a different search term or platform
         </p>
       </motion.div>
@@ -32,15 +34,15 @@ export function ProfileList({
   }
 
   return (
-    <div className="space-y-3">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
       <AnimatePresence mode="popLayout">
         {profiles.map((profile, i) => (
           <motion.div
             key={profile.user_id}
             layout
-            initial={{ opacity: 0, y: 24, scale: 0.97 }}
+            initial={{ opacity: 0, y: 24, scale: 0.95 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.95, transition: { duration: 0.15 } }}
+            exit={{ opacity: 0, scale: 0.9, transition: { duration: 0.15 } }}
             transition={{
               type: "spring",
               stiffness: 300,
