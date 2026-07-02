@@ -6,7 +6,7 @@ const Card = forwardRef<HTMLDivElement, HTMLAttributes<HTMLDivElement>>(
     <div
       ref={ref}
       className={cn(
-        "rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 shadow-sm",
+        "rounded-2xl glass hover:border-[var(--border-medium)] transition-all duration-300 hover:shadow-[var(--shadow-card-hover)]",
         className,
       )}
       {...props}
@@ -31,7 +31,7 @@ const CardTitle = forwardRef<HTMLDivElement, HTMLAttributes<HTMLDivElement>>(
     <div
       ref={ref}
       className={cn(
-        "text-lg font-semibold leading-none tracking-tight text-gray-900 dark:text-gray-100",
+        "text-lg font-semibold leading-none tracking-tight text-[var(--text-primary)] font-[var(--font-display)]",
         className,
       )}
       {...props}
@@ -46,7 +46,7 @@ const CardDescription = forwardRef<
 >(({ className, ...props }, ref) => (
   <div
     ref={ref}
-    className={cn("text-sm text-gray-500 dark:text-gray-400", className)}
+    className={cn("text-sm text-[var(--text-secondary)]", className)}
     {...props}
   />
 ));

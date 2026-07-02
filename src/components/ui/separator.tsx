@@ -6,7 +6,7 @@ const Separator = forwardRef<HTMLDivElement, HTMLAttributes<HTMLDivElement>>(
     <div
       ref={ref}
       className={cn(
-        "shrink-0 bg-gray-200 dark:bg-gray-700",
+        "shrink-0 bg-gradient-to-r from-transparent via-[var(--border-subtle)] to-transparent",
         className?.includes("h-") ? "" : "h-px w-full",
         className,
       )}
